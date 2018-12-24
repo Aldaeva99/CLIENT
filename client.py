@@ -11,20 +11,20 @@ class Client:
 		self.H = H
 		self.P = P
 		self.timeout = timeout
-		self.sock = socket.socket()
 		if timeout is not None:
 			socket.setdefaulttimeout(self.timeout)
 
 	def get(self, metr):
+
 		try:
-			self.sock.create_connection((self.H, self.P))  # Подключение к серверу
+			s = socket.create_connection((self.H, self.P))  # Подключение к серверу
 		except socket.error as err:
 			raise ClientError("error with connection", err)
 		Input = "get {}\n".format(metr)  # Форматируем данные которые ввел пользователь
-		self.sock.send(Input.encode("utf-8"))  # Отправляем данные на сервер
+		s.send(Input.encode("utf-8"))  # Отправляем данные на сервер
 		Inf = ""  # Ответ от сервера
 		while True:
-			Inf += self.sock.recv(4096).decode("utf-8")  # Получаем ответ от сервера
+			Inf += s.recv(4096).decode("utf-8")  # Получаем ответ от сервера
 			if len(Inf) < 2:
 				break
 			elif Inf[-2] == "\n" == Inf[-1]:
@@ -47,15 +47,17 @@ class Client:
 	def put(self, metr, values, timestamp = None):
 		if timestamp is None:
 			timestamp = str(int(time.time()))
-			self.sock.create_connection((self.H, self.P))
+			s = socket.create_connection((self.H, self.P))
 			Input = "put {} {} {}\n".format(metr, values, timestamp)
-			self.sock.send(Input.encode("utf-8"))
+			s.send(Input.encode("utf-8"))
 
-			Inf = self.sock.recv(4096).decode("utf-8")
+			Inf = s.recv(4096).decode("utf-8")
 			if Inf == "ok\n\n":
 				return 0
 			else:
 				raise ClientError(Inf)
+
+
 
 
 
