@@ -50,14 +50,17 @@ class Client:
 			s = socket.create_connection((self.H, self.P))
 			Input = "put {} {} {}\n".format(metr, values, timestamp)
 			s.send(Input.encode("utf-8"))
+		else:
+			s = socket.create_connection((self.H, self.P))
+			Input = "put {} {} {}\n".format(metr, values, timestamp)
+			s.send(Input.encode("utf-8"))
+
 
 			Inf = s.recv(4096).decode("utf-8")
 			if Inf == "ok\n\n":
 				return 0
 			else:
 				raise ClientError(Inf)
-
-
 
 
 
