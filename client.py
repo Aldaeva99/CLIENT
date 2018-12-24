@@ -16,7 +16,10 @@ class Client:
 			socket.setdefaulttimeout(self.timeout)
 
 	def get(self, metr):
-		self.sock.create_connection((self.H, self.P))  # Подключение к серверу
+		try:
+			self.sock.create_connection((self.H, self.P))  # Подключение к серверу
+		except socket.error as err:
+			raise ClientError("error with connection", err)
 		Input = "get {}\n".format(metr)  # Форматируем данные которые ввел пользователь
 		self.sock.send(Input.encode("utf-8"))  # Отправляем данные на сервер
 		Inf = ""  # Ответ от сервера
@@ -53,6 +56,7 @@ class Client:
 				return 0
 			else:
 				raise ClientError(Inf)
+
 
 
 
